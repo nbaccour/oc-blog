@@ -1,0 +1,160 @@
+{% extends 'base.html.twig' %}
+
+{% block content %}
+
+    <div class="col-md-12 col-lg-8 main-content">
+        <div class="row">
+
+
+            {#-----------------------------------------------------------------------------------------------#}
+
+            <div class="col-md-12 col-lg-12 main-content">
+                <img src="public/images/post/{{ postimg }}" alt="Image" class="img-fluid mb-5">
+                <div class="post-meta">
+                    <span class="author mr-2"><img src="public/images/person_1.jpg" alt="{{ author }}"
+                                                   class="mr-2"> {{ author }}</span>&bullet;
+                    <span class="mr-2">  {{ createDate }} </span> &bullet;
+                    <span class="ml-2"><span class="fa fa-comments"></span> {{ countcomments }}</span>
+                </div>
+                <h1 class="mb-4">{{ title }}</h1>
+                <a class="category mb-5" href="#">{{ category }}</a>
+
+                <div class="post-content-body">
+                    <p>{{ content }}</p>
+
+                </div>
+
+
+                <div class="pt-5">
+                    <p>Categories: <a href="#">{{ category }}</a></p>
+                </div>
+
+
+                <div class="pt-5">
+                    <h3 class="mb-5">{{ countcomments }} Commentaires</h3>
+                    {% if disabledBt == 1 %}
+                        <div class="alert alert-info" role="alert">Vous ne pouvez pas envoyer des commentaires pour cet
+                            article car vous
+                            avez un ou des commentaires en attente de
+                            validation
+                        </div>
+                    {% endif %}
+                    {#//----------------------------------------------------#}
+
+                    <ul class="comment-list">
+                        {% for commentParent in comments %}
+                            <li class="comment">
+                                <div class="vcard">
+                                    <img src="public/images/avatar.jpg" alt="Image placeholder">
+                                </div>
+                                <div class="comment-body">
+                                    <h3>{{ commentParent.firstname }}</h3>
+                                    <div class="meta">{{ commentParent.createDate }}</div>
+                                    <p> {{ commentParent.comment }}</p>
+                                    {% if session.firstname %}
+                                        {#{% if connectid != commentParent.author %}#}
+                                        <button id="{{ commentParent.id }}"
+                                                class="replycommentchild btn btn-primary {% if disabledBt == 1 %}  d-none{% endif %}"
+                                                type="submit">
+                                            Répondre
+                                        </button>
+                                        {#{% endif %}#}
+                                        <div id="replycommentform_{{ commentParent.id }}"
+                                             class="comment-form-wrap pt-1 d-none">
+                                            {#<h3 class="mb-5">Ajouter un commentaire</h3>#}
+                                            <div id="childcommentadd_{{ commentParent.id }}"></div>
+                                            <form class="addcommentChild p-1 bg-light">
+
+                                                <div class="form-group">
+                                                    {#<label for="message">Votre avis</label>#}
+                                                    <textarea name="comment"
+                                                              id="comment_{{ commentParent.id }}" cols="30" rows="4"
+                                                              class="form-control"></textarea>
+                                                    <input type="hidden" name="postid"
+                                                           id="postid_{{ commentParent.id }}" value="{{ postid }}"
+                                                           class="form-control">
+                                                    <input type="hidden" name="author"
+                                                           id="author_{{ commentParent.id }}"
+                                                           value="{{ idauthorcomment }}"
+                                                           class="form-control">
+                                                    <input type="hidden" name="parentid"
+                                                           id="parentid_{{ commentParent.id }}"
+                                                           value={{ commentParent.id }}
+                                                           class="form-control">
+                                                </div>
+                                                <div class="form-group" id="btsendCommentChild">
+                                                    <input id="bt_{{ commentParent.id }}" type="submit"
+                                                           class="btn btn-primary btn-sm" value="Envoyer">
+                                                    <input id="cancellchild_{{ commentParent.id }}" type="submit"
+                                                           class="cancelsendcommentchild btn btn-secondary btn-sm btn-danger"
+                                                           value="Annuler">
+                                                </div>
+
+                                            </form>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                {% if  commentParent.commentsChild %}
+                                    <ul class="children">
+                                        {% for datacomment in commentParent.commentsChild %}
+                                            <li class="comment">
+                                                <div class="vcard">
+                                                    <img src="public/images/avatar.jpg" alt="Image placeholder">
+                                                </div>
+                                                <div class="comment-body">
+                                                    <h3>{{ datacomment.firstname }}</h3>
+                                                    <div class="meta">{{ datacomment.createDate }}</div>
+                                                    <p>{{ datacomment.comment }}</p>
+                                                    {#{% if session.firstname %}#}
+                                                    {#<p><a href="#" class="reply rounded">Répondre</a></p>#}
+                                                    {#{% endif %}#}
+                                                </div>
+
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                    <!-- END comment-list -->
+                    {% if session.firstname %}
+
+                        <div class="comment-form-wrap pt-5 {% if disabledBt == 1 %}  d-none{% endif %}">
+                            <h3 class="mb-5">Ajouter un commentaire</h3>
+                            <div id="commentadd"></div>
+                            <form id="addcomment" class="p-5 bg-light">
+
+                                <div class="form-group">
+                                    <label for="message">Votre commentaire</label>
+                                    <textarea name="comment" id="comment" cols="30" rows="10"
+                                              class="form-control"></textarea>
+                                    <input type="hidden" name="postid" id="postid" value="{{ postid }}"
+                                           class="form-control">
+                                    <input type="hidden" name="author" id="author" value="{{ idauthorcomment }}"
+                                           class="form-control">
+                                    <input type="hidden" name="parentid" id="parentid" value=0
+                                           class="form-control">
+                                </div>
+                                <div class="form-group" id="btsendComment">
+                                    <input type="submit"
+                                           value="Envoyer"
+                                           class="btn btn-primary ">
+                                </div>
+
+                            </form>
+                        </div>
+                    {% endif %}
+                </div>
+
+            </div>
+            {#-----------------------------------------------------------------------------------------------#}
+
+        </div>
+
+        <div class="row mt-5">
+            <div class="col-md-12 text-center">
+            </div>
+        </div>
+    </div>
+{% endblock %}
